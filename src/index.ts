@@ -1,5 +1,4 @@
 // src/index.ts
-
 import {
   z,
   ZodString,
@@ -10,7 +9,8 @@ import {
   ZodOptional,
 } from "zod";
 
-const FIELD_ERRORS = {
+/** Exported so extras can reuse consistent text */
+export const FIELD_ERRORS = {
   REQUIRED: "is required",
   STRING: "must be a string",
   NUMBER: "must be a number",
@@ -22,9 +22,10 @@ const FIELD_ERRORS = {
   SLUG_FORMAT: "must contain only lowercase letters, numbers and hyphens",
   MOBILE: "must be a valid 10-digit mobile number",
   EMAIL: "must be a valid email address",
-};
+} as const;
 
-interface CustomMessages {
+/** Exported for extras and consumers */
+export interface CustomMessages {
   required?: string;
   invalid?: string;
   validation?: string;
@@ -329,5 +330,9 @@ export const emailOrMobile = (
       }
     );
 };
+
+
+export * from "./extensions";
+
 
 export { z };

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zod vs Zod Fragments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+
+        .code-section {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .before {
+            background: #fff5f5;
+            border-right: 3px solid #e53e3e;
+        }
+
+        .after {
+            background: #f0fff4;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .before .section-title {
+            color: #e53e3e;
+        }
+
+        .after .section-title {
+            color: #38a169;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .before .badge {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .after .badge {
+            background: #38a169;
+            color: white;
+        }
+
+        pre {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 30px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            flex: 1;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-weight: 500;
+        }
+
+        .stats {
+            padding: 40px;
+            background: #f7fafc;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #38a169;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .before {
+                border-right: none;
+                border-bottom: 3px solid #e53e3e;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Zod vs Zod Fragments</h1>
+            <p class="subtitle">Clean, readable validation schemas</p>
+        </div>
+
+        <div class="comparison">
+            <div class="code-section before">
+                <div class="section-title">
+                    ❌ Native Zod
+                    <span class="badge">Verbose</span>
+                </div>
+                <pre><code>import { z } from "zod";
+
+const userSchema = z.object({
+  name: z.string({
+    required_error: "Name is required",
+    invalid_type_error: "Name must be a string"
+  }).min(1, "Name cannot be empty"),
+  
+  email: z.string({
+    required_error: "Email is required"
+  }).email("Invalid email format"),
+  
+  age: z.number({
+    required_error: "Age is required",
+    invalid_type_error: "Age must be a number"
+  }).min(18, "Must be 18 or older"),
+  
+  role: z.enum(["admin", "user"], {
+    required_error: "Role is required"
+  })
+});</code></pre>
+            </div>
+
+            <div class="code-section after">
+                <div class="section-title">
+                    ✅ Zod Fragments
+                    <span class="badge">Clean</span>
+                </div>
+                <pre><code>import { 
+  z, 
+  requiredString, 
+  email, 
+  requiredNumber, 
+  Enum 
+} from "zod-fragments";
+
+const userSchema = z.object({
+  name: requiredString("Name"),
+  email: email("Email"),
+  age: requiredNumber("Age"),
+  role: Enum(["admin", "user"], "Role")
+});</code></pre>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">60%</div>
+                <div class="stat-label">Less Code</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Lines Saved</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Same Power</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">10x</div>
+                <div class="stat-label">More Readable</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

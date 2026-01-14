@@ -331,6 +331,41 @@ type User = z.infer<typeof userSchema>;
 | `paginationFields` | `page` (default: 1), `limit` (default: 10) | Pagination parameters |
 | `listQueryFields` | `page`, `limit`, `filters`, `sort`, `search` | Complete listing endpoint parameters |
 
+## New Extensions (from `src/extensions.ts`)
+
+The library now includes additional helpers and normalized/coercion variants. Highlights:
+
+- **Normalized / Coercion variants**: `requiredStringTrimmed`, `emailNormalized`, `optionalNumberCoerce`, `booleanCoerce` — useful when you want automatic trimming, lowercasing, or coercion from strings.
+- **Slug helpers**: `requiredSlugNormalized`, `optionalSlugNormalized` — validate and normalize slugs (lowercase + trim).
+- **Enum helpers**: `enumFrom(options, ...)`, `enumWithLabels(options, labels, ...)` — build enums and optionally map values to labels.
+- **Pagination builders**: `buildPagination(maxLimit?)`, `buildListQuery(sortKeys, maxLimit?)` — safer defaults and integrated `filters`, `sort`, `search`.
+- **Email/Mobile normalized**: `emailOrMobileNormalized` — returns `{ type: 'email'|'mobile', value }` and normalizes formatting.
+- **SEO strict block**: `seoFieldsStrict` — SEO fields with stricter `.max()` constraints.
+- **India-specific validators**: `pinCode`, `pan`, `gstin`, `inMobile` — PIN, PAN, GSTIN and Indian mobile validators with normalization.
+- **Money & currency**: `inrCurrency`, `money(label?)`, `priceObject` — handle numeric or string amounts, validation and rounding.
+- **Dates & ranges**: `isoDateTime`, `dateRange`, `dateAfter(minISO)` — ISO date validation and range helpers.
+- **Arrays utilities**: `nonEmptyArrayOf(schema, label?)`, `uniqueArrayBy(schema, key, label?)`.
+- **URL variants**: `httpsUrl`, `domain`, `imageUrlStrict` — https-only URLs, domain validation, and image URL checks.
+- **Cursor pagination**: `cursorPagination` — `cursor` + `limit` payloads for cursor-based APIs.
+- **Constrained records & brands**: `recordOf(keys, value)`, `brandedUuid(brand, label?)` and `Brand<T,B>` type helper.
+
+Quick examples:
+
+```typescript
+import { requiredSlugNormalized, buildPagination, emailOrMobileNormalized, money } from "zod-fragments";
+
+const slug = requiredSlugNormalized("Post Slug");
+
+const query = buildPagination(500); // { page, limit }
+
+const id = emailOrMobileNormalized("Contact");
+
+const price = money("Price");
+```
+
+These helpers are exported from `src/extensions.ts` and intended to complement the existing fragments with common normalization and domain-specific validators.
+
+
 ## License
 
 This project is licensed under the MIT License.
